@@ -1,0 +1,23 @@
+.nav-mobile{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background: var(--colorPrimary);
+	padding: 1rem;
+	@include border-box;
+
+	& .nav-mob-item {
+		display: block;
+		width: 100%;
+		padding: 1rem;
+		@include border-box;
+	}
+
+	& .b-times {
+		position: absolute;
+		right: 4%;
+		top: 4%;
+	}
+}

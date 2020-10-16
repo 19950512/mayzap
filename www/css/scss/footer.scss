@@ -1,0 +1,21 @@
+footer {
+
+	& .logo-img {
+		display: block;
+		width: 8rem;
+		padding: 1rem;
+		@include border-box;
+	}
+
+	& .img-localizacao {
+		display: block;
+		width: 80%;
+	}
+}
+@media only screen and (max-width: 1023px){
+	footer {
+		& .img-localizacao {
+			width: 100%
+		}		
+	}
+}

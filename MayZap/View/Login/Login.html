@@ -1,0 +1,58 @@
+<section class="content content_v content_h content_m">
+	<div class="max40 margin-auto">
+		<h2 class="text-center">LOGIN</h2>
+		<div class="site-space-2"></div>
+		<p class="formulario-titulo">
+			<i class="icl ic-fingerprint"></i> ID
+		</p>
+		<div>
+			<input id="app_id" class="formsimple-input width-100" type="text" placeholder="seu ID" value="{{id}}" />
+		</div>
+		<div class="site-space-1"></div>
+		<p class="formulario-titulo">
+			<i class="icl ic-lock-alt"></i> Senha
+		</p>
+		<div>
+			<input id="app_senha" class="formsimple-input width-100" type="password" placeholder="******" />
+		</div>
+		<div class="site-space-1"></div>
+		<div class="block width-100 pd-right-min">
+			<button class="width-100 b b-primary" id="login_submit" onclick="entrar(this)"><i class="icl ic-sign-in"></i> Entrar</button>
+		</div>
+	</div>
+</section>
+
+<script>
+
+	window.entrar = async btn => {
+		
+		btn.innerHTML = '<i class="icl ic-spinner-third rotating"></i> Aguarde...';
+		btn.disabled = true;
+
+		var autentica = dev.ajax('/login/entrar', {
+			app_id: app_id.value,
+			app_senha: app_senha.value
+		});
+
+		autentica.then(res => {
+
+			/* resposta.innerHTML = res.data; */
+			if(res.r == 'ok'){
+				window.location.href = '/';
+				return false;
+			}
+
+			btn.innerHTML = '<i class="icl ic-sign-in"></i> Entrar';
+			dev.mensagem(res.data);
+			btn.disabled = false;
+
+		}).catch(res => {
+			console.error("Ops, algo de errado não deu certo.", res);
+		});
+	};
+
+	window.login_evento = evt => (evt.keyCode == 13) ? entrar(login_submit) : false;
+
+	dev.add('keyup', app_senha, evt => login_evento(evt));
+	dev.add('keyup', app_id, evt => login_evento(evt));
+</script>

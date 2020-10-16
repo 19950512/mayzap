@@ -1,0 +1,185 @@
+<section class="content content_v content_h content_m">
+	<div class="max40 margin-auto">
+    <h1 class="text-center">{{titulo_pagina}}</h1>
+		<div>
+      <h2>Título</h2>
+			<input id="post_nome" class="formsimple-input width-100" type="text" value="{{post_nome}}" placeholder="Título da publicação" />
+    </div>
+    <div class="site-space-1"></div>
+    <div id="drop-area" class="{{hidden}}">
+      <div class="site-space-1"></div>
+      <form class="my-form">
+        <p>Para subir várias imagens, clique no botão a baixo</p>
+        <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+        <label class="b b-terciary" for="fileElem">Várias fotos</label>
+      </form>
+      <progress id="progress-bar" max=100 value=0></progress>
+      <div id="gallery"></div>
+    </div>
+    <div class="site-space-1"></div>
+    <div class="block width-50 pd-right"><button id="publicacao_submit" class="b b-primary width-100" onclick="publicacao_criar(this)">Criar</button></div>
+    <div class="block width-50 pd-left"><button class="b b-danger width-100">Sair</button></div>
+  </div>
+</section>
+
+<style>
+  #progress-bar {
+      width: 100%;
+  }
+#drop-area {
+border: 2px dashed #ccc;
+width: 100%;
+padding: 2rem;
+
+}
+#drop-area.highlight {
+border-color: purple;
+}
+p {
+margin-top: 0;
+}
+.my-form {
+margin-bottom: 10px;
+}
+#gallery {
+margin-top: 10px;
+}
+#gallery img {
+width: 150px;
+margin-bottom: 10px;
+margin-right: 10px;
+vertical-align: middle;
+}
+#fileElem {
+display: none;
+}
+</style>
+
+<script>
+let dropArea = document.getElementById("drop-area");
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+dropArea.addEventListener(eventName, preventDefaults, false);   
+document.body.addEventListener(eventName, preventDefaults, false);
+});
+
+['dragenter', 'dragover'].forEach(eventName => {
+dropArea.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+dropArea.addEventListener(eventName, unhighlight, false);
+});
+
+dropArea.addEventListener('drop', handleDrop, false);
+
+function preventDefaults (e) {
+e.preventDefault();
+e.stopPropagation();
+};
+
+function highlight(e) {
+dropArea.classList.add('highlight');
+};
+
+function unhighlight(e) {
+dropArea.classList.remove('active');
+};
+
+function handleDrop(e) {
+var dt = e.dataTransfer;
+var files = dt.files;
+
+handleFiles(files);
+};
+
+let uploadProgress = [];
+let progressBar = document.getElementById('progress-bar');
+
+function initializeProgress(numFiles) {
+progressBar.value = 0;
+uploadProgress = [];
+
+for(let i = numFiles; i > 0; i--) {
+  uploadProgress.push(0);
+}
+}
+
+function updateProgress(fileNumber, percent) {
+uploadProgress[fileNumber] = percent;
+let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length;
+console.debug('update', fileNumber, percent, total);
+progressBar.value = total;
+};
+
+function handleFiles(files) {
+files = [...files];
+initializeProgress(files.length);
+files.forEach(uploadFile);
+files.forEach(previewFile);
+};
+
+function previewFile(file) {
+let reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onloadend = function() {
+  let img = document.createElement('img');
+  img.src = reader.result;
+  document.getElementById('gallery').appendChild(img);
+}
+};
+
+function uploadFile(file, i) {
+var url = '/login/uploadImagens';
+var xhr = new XMLHttpRequest();
+var formData = new FormData();
+xhr.open('POST', url, true);
+xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+xhr.upload.addEventListener("progress", function(e) {
+  updateProgress(i, (e.loaded * 100.0 / e.total) || 100)
+});
+
+xhr.addEventListener('readystatechange', function(e) {
+  if (xhr.readyState == 4 && xhr.status == 200) {
+    updateProgress(i, 100);
+  }
+  else if (xhr.readyState == 4 && xhr.status != 200) {
+  }
+});
+
+formData.append('upload_preset', 'ujpu6gyk');
+formData.append('file', file);
+xhr.send(formData);
+};
+</script>
+<script>
+
+	window.publicacao_criar = async btn => {
+		
+		btn.innerHTML = '<i class="icl ic-spinner-third rotating"></i> Aguarde...';
+
+		var autentica = dev.ajax('/administrador/save', {
+			post_nome: post_nome.value
+		});
+
+		autentica.then(res => {
+
+			/* resposta.innerHTML = res.data; */
+			if(res.r == 'ok'){
+				window.location.href = '/';
+				return false;
+			}
+
+			btn.innerHTML = '<i class="icl ic-sign-in"></i> Entrar';
+			dev.mensagem(res.data);
+
+		}).catch(res => {
+			console.error("Ops, algo de errado não deu certo.", res);
+		});
+	};
+
+	window.publicacao_evento = evt => (evt.keyCode == 13) ? publicacao_criar(publicacao_submit) : false;
+
+	dev.add('keyup', post_nome, evt => publicacao_evento(evt));
+</script>

@@ -1,0 +1,10 @@
+Sessions/*
+IDEIAS/*
+
+LICENSE.md
+
+www/node_modules/*
+*.map
+package-lock.json
+
+Db.php

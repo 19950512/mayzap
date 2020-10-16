@@ -1,0 +1,55 @@
+$widthLogo: 5;
+$withBtnMenu: 3;
+.nav {
+	width: 100%;
+	color: #fff;
+	top: 0;
+	background: var(--colorPrimary);
+	margin: auto;
+	z-index: 3;
+	padding: 1rem 0;
+	@include border-box;
+
+	& .nav-logo {
+		display: inline-block;
+		width: #{$widthLogo}rem;
+		padding: .5rem 0;
+		@include border-box;
+		vertical-align: middle;
+
+		& img {
+			display: block;
+			width: 100%;
+		}
+	}
+	& .nav-container {
+		display: inline-block;
+		width: calc(100% - #{$widthLogo}rem);
+	}
+
+	/* Flex Container */
+	& .container {
+		display: flex;
+		text-align: right;
+		width: calc(100% - #{($widthLogo + $withBtnMenu)}rem);
+		vertical-align: middle;
+		//border: 1px solid #ccc;
+		
+		/* Flex Item */
+		& .item {
+			flex: 1;
+			text-align: center;
+			font-size: 1rem;
+			//background: tomato;
+			/* O flex: 1; é necessário para que cada item se expanda ocupando o tamanho máximo do container. */
+		}
+
+		& .row {
+			flex-direction: row;
+		}
+
+		& a {
+			color: var(--colorWhite);
+		}
+	}
+}

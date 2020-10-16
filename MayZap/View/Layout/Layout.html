@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR" id="html">
+	<head>
+		<title>{{titulo_page}}</title>
+		{{metas}}
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="theme-color" content="{{color_primary}}">
+		<meta name="application-name" content="{{site_nome}}">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="theme-color" content="{{color_primary}}">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="manifest" content="/manifest.json">
+		<meta name="apple-mobile-web-app-title" content="{{site_nome}}">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-touch-fullscreen" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="{{color_primary}}">
+		<meta name="apple-touch-startup-image" content="/site.png">
+		<meta name="msapplication-navbutton-color" content="{{color_primary}}">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="msapplication-TileColor" content="{{color_primary}}">
+		<meta name="msapplication-TileImage" content="/site.png">
+		<meta name="msapplication-square310x310logo" content="/site.png">
+		<link rel="apple-touch-icon" media="all" href="/site.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/site.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/site.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/site.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/site.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/site.png">
+
+
+		<style>
+			:root {
+				--domain_statics: '';
+			}
+		</style>
+		<script>
+			window.themes = {
+				active: 'dark',
+				themes: {
+					light: {
+						colorPrimary: '#4CB5AE',
+						colorSecondary: '#81D6E3',
+						colorTerciary: '#B2DDF7',
+						colorDanger: '#FF101F',
+						colorGray1: '#191102',
+						colorGray2: '#232322',
+						colorGray3: '#3c3c3a',
+						colorGray4: '#d2d6ef',
+						colorWhite: '#ffffff',
+						colorWhiteBlack: '#ffffff',
+					},
+					dark: {
+						colorPrimary: '#204c49',
+						colorSecondary: '#447077',
+						colorTerciary: '#617988',
+						colorDanger: '#FF101F',
+						colorGray1: '#d2d6ef',
+						colorGray2: '#3c3c3a',
+						colorGray3: '#232322',
+						colorGray4: '#191102',
+						colorWhite: '#617988',
+						colorWhiteBlack: '#d2d6ef',
+					},
+				},
+				set: newTheme => {
+
+					const themeColors = themes.themes[newTheme];
+					sessionStorage.setItem('theme', newTheme);
+
+					Object.keys(themeColors).map(key => {
+						document.getElementById('html').style.setProperty(`--${key}`, themeColors[key]);
+					});
+				},
+				check: f => {
+
+					let themeTemp = themes.active; /* Light default */
+					if(!sessionStorage.getItem('theme')){
+						sessionStorage.setItem('theme', themeTemp);
+					}
+
+					themeTemp = sessionStorage.getItem('theme');
+
+					return themeTemp;
+				}
+			};
+		</script>
+
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/favicon.ico" type="image/x-icon">
+		<script src="/js/dev.min.js"></script>
+		<script src="/js/site.min.js" defer="defer" async="async"></script>
+		<link rel="stylesheet" media="all" type="text/css" href="/css/icones.min.css">
+		<link rel="stylesheet" href="/css/site.min.css">
+	</head>
+	<body>
+		<nav class="nav">
+			<div class="content content_h content_m">
+				
+				<div class="nav-logo">
+					<a href="/" title="{{site_nome}}"><img src="/img/logo/logo.png" alt="{{site_nome}}" title="{{site_nome}}" /></a>
+				</div>
+				<div class="nav-container no-mobile">
+					<div class="container">
+						<div class="item row">
+							<a href="/" title="Início" class="white-black"><i class="icl ic-home"></i> Início</a>
+						</div>
+						<div class="item row">
+							<a href="/servicos" title="Serviços" class="white-black"><i class="icl ic-tools"></i> Serviços</a>
+						</div>
+						<div class="item row">
+							<a href="/sobre" title="{{site_nome}}" class="white-black"><i class="icl ic-tooth"></i> {{site_nome}}</a>
+						</div>
+						<div class="item row">
+							<a href="/{{ifloged}}" class="white-black" title="{{pes_nome}}"><i class="icl ic-user-circle"></i> {{pes_nome}}</a>
+						</div>
+						<div class="item row">
+							<button type="button" onclick="darkModeToggle();" class="b b-transparent font17"><i class="ics ic-adjust white-black"></i></button>
+						</div>
+					</div>
+				</div>
+				<div class="nav-container no-pc text-right">
+					<button type="button" onclick="menuMobileOpen();" class="b b-transparent font25"><i class="icr ic-ellipsis-h white-black"></i></button>
+				</div>
+			</div>
+		</nav>
+		<div id="nav_mobile" class="hidden nav-mobile no-pc">
+
+			<h2 class="white-black text-center">M E N U</h2>
+			<button type="button" onclick="menuMobileClose();" class="b b-transparent font25 b-times"><i class="icr ic-times white-black"></i></button>
+			
+			<a href="/" title="Início"><div class="nav-mob-item text-center white-black"><i class="icl ic-home"></i> INÍCIO</div></a>
+			<a href="/" title="Serviços"><div class="nav-mob-item text-center white-black"><i class="icl ic-tools"></i> SERVIÇOS</div></a>
+			<a href="/sobre" title="{{site_nome}}"><div class="nav-mob-item text-center white-black upper"><i class="icl ic-tooth"></i> {{site_nome}}</div></a>
+			<a href="/{{ifloged}}" title="Serviços"><div class="nav-mob-item text-center white-black upper"><i class="icl ic-user-circle"></i> {{pes_nome}}</div></a>
+		</div>
+		<main id="content">{{view}}</main>
+		<footer>
+			<p class="text-center">{{ano}} - {{site_nome}}</p>
+		</footer>
+		<div id="push-loader"></div>
+		<div id="feed_back" class="feed_back"></div>
+		<script>
+
+			window.logout = f => {
+
+				var logout = dev.ajax('/login/logout', {});
+
+				logout.then(res => {
+
+					/* resposta.innerHTML = res.data; */
+					if(res.r == 'ok'){
+						window.location.reload();
+						return false;
+					}
+				});
+			};
+
+			window.menuMobileOpen = f => nav_mobile.classList.remove('hidden');
+			window.menuMobileClose = f => nav_mobile.classList.add('hidden');
+
+			window.darkModeToggle = btn => {
+				themes.active = (themes.active == 'light') ? 'dark' : 'light';
+				themes.set(themes.active);
+			};
+
+			(f => themes.set(themes.check()))();
+
+		</script>
+	</body>
+</html>

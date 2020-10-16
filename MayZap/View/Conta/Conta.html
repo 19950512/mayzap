@@ -1,0 +1,281 @@
+<section class="content content_v content_h content_m">
+
+	<div class="inline-block width-25">
+		<button class="b b-transparent" type="button" onclick="logout();" title="Sair"><i class="icl ic-sign-out"></i> Sair</button>
+	</div>
+
+	<a href="/conta/extrato" title="Extrato da Conta"><h1><strong>Meu saldo devedor: </strong>R$ {{saldo}}</h1></a>
+	<h2>Ordens de Serviços</h2>
+
+	<div>
+		<input oninput="os_render(os_fetch);" id="os_input_search" class="formsimple-input width-100" type="text" placeholder="Pesquisar OS, nome de paciente, data, valor, etc.." />
+	</div>
+
+	<div style="max-height: 70vh; width: 100%;max-width: 100%; overflow: auto;">
+		<table class="simple-grid">
+			<thead>
+				<tr>
+					<th style="width: 45px;">QT</th>
+					<th>CÓDIGO</th>
+					<th>CADASTRO</th>
+					<th>ENTREGA</th>
+					<th>COR</th>
+					<th>PACIENTE</th>
+					<th>STATUS</th>
+					<th class="text-right">DESCONTO</th>
+					<th class="text-right">VALOR</th>
+					<th class="text-right">TOTAL</th>
+					<th style="width: 20px;"></th>
+				</tr>
+			</thead>
+			<tbody id="render_os"></tbody>
+		</table>
+	</div>
+</section>
+
+<script>
+
+	window.os_fetch = {};
+
+	window.os_get = async f => {
+
+		render_os.innerHTML = '<tr><th class="text-center" colspan="11"><i class="icl ic-spinner-third rotating"></i> Aguarde...</th></tr>';
+
+		var os = dev.ajax('/conta/getallos', {});
+
+		os.then(res => {
+
+			/* resposta.innerHTML = res.data; */
+			if(res.r == 'ok'){
+				render_os.innerHTML = '';
+				os_fetch = res.data;
+				os_render(os_fetch);
+				return false;
+			}else{
+				if(typeof(logout) !== 'undefined'){
+					logout();
+				}
+			}
+
+
+			dev.mensagem(res.data);
+
+		}).catch(res => {
+			console.error("Ops, algo de errado não deu certo.", res);
+		});
+	};
+
+	window.os_render = data => {
+
+		let mascara = `<tr onclick="os_openDetalhes({{os_codigo}});">
+			<td>{{ct}}</td>
+			<td>{{os_codigo}}</td>
+			<td>{{os_autodata_str}}</td>
+			<td>{{os_data_entrega_str}}</td>
+			<td>{{os_cor}}</td>
+			<td>{{os_paciente}}</td>
+			<td>{{os_status_str}}</td>
+			<td class="text-right">{{os_desconto_str}}</td>
+			<td class="text-right">{{os_valor_str}}</td>
+			<td class="text-right">{{os_valor_total_str}}</td>
+			<td></td>
+		</tr>`;
+
+		dev.render(data, {
+			renderTo: 'render_os',
+			mask: mascara,
+			empty: '<tr><th colspan="11"><p class="text-center">nada foi encontrado <br /><br /> <i class="icl ic-frown gray3" style="font-size: 30px;"></i><p></th></tr>',
+			search: os_input_search.value,
+			filters: {}
+		});
+	};
+
+	window.os_openDetalhes = os_codigo => {
+
+		let fetchTemp = {};
+		for(var i in os_fetch){
+			if(os_fetch[i]['os_codigo'] == os_codigo){
+				fetchTemp = os_fetch[i];
+			}
+		}
+
+		let html = `
+			<div class="bg-white">
+				<div class="content content_h content_v content_m">
+					<h1>Ordem de Serviço</h1>
+					<h4>Código: ${fetchTemp['os_codigo']}</h4>
+					<h4>Paciente: ${fetchTemp['os_paciente']}</h4>
+				</div>
+			</div>
+		`;
+
+		dev.openDialog({
+			close: true,
+			html: html,
+			invisible: true
+		});
+		console.log(fetchTemp);
+	};
+
+	(f => os_get())();
+</script>
+
+<!--
+  <section class="hidden content content_v content_h content_m">
+	<div class="max40 margin-auto">
+		  <h1 class="text-center">Postar Fotos</h1>
+
+		<div class="hidden">
+			  <label>Grupo</label>
+			  <select class="formsimple-input width-100">
+				  <option value="">selecione</option>
+			  </select>
+		  </div>
+
+		<div>
+			<input id="img_titulo" class="formsimple-input width-100" type="text" placeholder="Título da imagem" />
+		  </div>
+		  <div class="site-space-1"></div>
+		  <div id="drop-area">
+			  <form class="my-form">
+				<p>Para subir várias imagens, clique no botão a baixo</p>
+				<input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+				<label class="b b-terciary" for="fileElem">Várias fotos</label>
+			  </form>
+			  <progress id="progress-bar" max=100 value=0></progress>
+			  <div id="gallery"></div>
+			</div>
+	  </div>
+  </section>
+  <style>
+	  #progress-bar {
+		  width: 100%;
+	  }
+	  #drop-area {
+		border: 2px dashed #ccc;
+		width: 100%;
+		padding: 2rem;
+		
+	  }
+	  #drop-area.highlight {
+		border-color: purple;
+	  }
+	  p {
+		margin-top: 0;
+	  }
+	  .my-form {
+		margin-bottom: 10px;
+	  }
+	  #gallery {
+		margin-top: 10px;
+	  }
+	  #gallery img {
+		width: 150px;
+		margin-bottom: 10px;
+		margin-right: 10px;
+		vertical-align: middle;
+	  }
+	  #fileElem {
+		display: none;
+	  }
+  </style>
+
+  <script>
+	let dropArea = document.getElementById("drop-area");
+
+	['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+	  dropArea.addEventListener(eventName, preventDefaults, false);   
+	  document.body.addEventListener(eventName, preventDefaults, false);
+	});
+
+	['dragenter', 'dragover'].forEach(eventName => {
+	  dropArea.addEventListener(eventName, highlight, false);
+	});
+
+	['dragleave', 'drop'].forEach(eventName => {
+	  dropArea.addEventListener(eventName, unhighlight, false);
+	});
+
+	dropArea.addEventListener('drop', handleDrop, false);
+
+	function preventDefaults (e) {
+	  e.preventDefault();
+	  e.stopPropagation();
+	};
+
+	function highlight(e) {
+	  dropArea.classList.add('highlight');
+	};
+
+	function unhighlight(e) {
+	  dropArea.classList.remove('active');
+	};
+
+	function handleDrop(e) {
+	  var dt = e.dataTransfer;
+	  var files = dt.files;
+
+	  handleFiles(files);
+	};
+
+	let uploadProgress = [];
+	let progressBar = document.getElementById('progress-bar');
+
+	function initializeProgress(numFiles) {
+	  progressBar.value = 0;
+	  uploadProgress = [];
+
+	  for(let i = numFiles; i > 0; i--) {
+		uploadProgress.push(0);
+	  }
+	}
+
+	function updateProgress(fileNumber, percent) {
+	  uploadProgress[fileNumber] = percent;
+	  let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length;
+	  console.debug('update', fileNumber, percent, total);
+	  progressBar.value = total;
+	};
+
+	function handleFiles(files) {
+	  files = [...files];
+	  initializeProgress(files.length);
+	  files.forEach(uploadFile);
+	  files.forEach(previewFile);
+	};
+
+	function previewFile(file) {
+	  let reader = new FileReader();
+	  reader.readAsDataURL(file);
+	  reader.onloadend = function() {
+		let img = document.createElement('img');
+		img.src = reader.result;
+		document.getElementById('gallery').appendChild(img);
+	  }
+	};
+
+	function uploadFile(file, i) {
+	  var url = '/login/uploadImagens';
+	  var xhr = new XMLHttpRequest();
+	  var formData = new FormData();
+	  xhr.open('POST', url, true);
+	  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+	  xhr.upload.addEventListener("progress", function(e) {
+		updateProgress(i, (e.loaded * 100.0 / e.total) || 100)
+	  });
+
+	  xhr.addEventListener('readystatechange', function(e) {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+		  updateProgress(i, 100);
+		}
+		else if (xhr.readyState == 4 && xhr.status != 200) {
+		}
+	  });
+
+	  formData.append('upload_preset', 'ujpu6gyk');
+	  formData.append('file', file);
+	  xhr.send(formData);
+	};
+  </script>
+-->

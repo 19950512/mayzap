@@ -1,0 +1,84 @@
+<section class="content content_v content_h content_m">
+
+	<div class="inline-block width-25">
+		<button class="b b-transparent" type="button" onclick="logout();" title="Sair"><i class="icl ic-sign-out"></i> Sair</button>
+	</div>
+
+	<h1><strong>Meu saldo devedor: </strong>R$ {{saldo}}</h1>
+	<h2>Extrato da Conta</h2>
+
+	<div>
+		<input oninput="extrato_render(extrato_fetch);" id="extrato_input_search" class="formsimple-input width-100" type="text" placeholder="Pesquisar OS, nome de paciente, data, valor, etc.." />
+	</div>
+
+	<div style="max-height: 70vh; min-width: 100%; overflow: auto;">
+		<table class="simple-grid">
+			<thead>
+				<tr>
+					<th style="width: 45px;">QT</th>
+					<th>OS</th>
+					<th>TÍTULO</th>
+					<th class="text-center" style="width: 50px">DATA</th>
+					<th class="text-center" style="width: 30px">TIPO</th>
+					<th class="text-right" style="width: 100px">VALOR</th>
+				</tr>
+			</thead>
+			<tbody id="render_extrato"></tbody>
+		</table>
+	</div>
+</section>
+
+<script>
+
+	window.extrato_fetch = {};
+
+	window.extrato_get = async f => {
+
+		render_extrato.innerHTML = '<tr><th class="text-center" colspan="11"><i class="icl ic-spinner-third rotating"></i> Aguarde...</th></tr>';
+
+		var os = dev.ajax('/conta/getextrato', {});
+
+		os.then(res => {
+
+			/* resposta.innerHTML = res.data; */
+			if(res.r == 'ok'){
+				render_extrato.innerHTML = '';
+				extrato_fetch = res.data;
+				extrato_render(extrato_fetch);
+				return false;
+			}else{
+				if(typeof(logout) !== 'undefined'){
+					logout();
+				}
+			}
+
+
+			dev.mensagem(res.data);
+
+		}).catch(res => {
+			console.error("Ops, algo de errado não deu certo.", res);
+		});
+	};
+
+	window.extrato_render = data => {
+
+		let mascara = `<tr>
+			<td>{{ct}}</td>
+			<td>{{os_codigo}}</td>
+			<td>{{fin_titulo}}</td>
+			<td>{{fin_autodata_str}}</td>
+			<td class="text-center">{{fin_tipo_str}}</td>
+			<td class="text-right">{{fin_valor_str}}</td>
+		</tr>`;
+
+		dev.render(data, {
+			renderTo: 'render_extrato',
+			mask: mascara,
+			empty: '<tr><th colspan="11"><p class="text-center">nada foi encontrado <br /><br /> <i class="icl ic-frown gray3" style="font-size: 30px;"></i><p></th></tr>',
+			search: extrato_input_search.value,
+			filters: {}
+		});
+	};
+
+	(f => extrato_get())();
+</script>

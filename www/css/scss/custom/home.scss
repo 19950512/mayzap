@@ -1,0 +1,73 @@
+
+.bg-servico1{
+	display: table;
+	width: 100%;
+	background-image: url(/img/home/servico1.jpg);
+	background-size: cover;
+	background-position: center top;
+	background-repeat: no-repeat;
+}
+.bg-projetos1{
+	display: block;
+	width: 100%;
+ 
+	& .projetos1-img, .projetos2-img{
+		display: inline-block;
+		width: 50%;
+		position: relative;
+		overflow: hidden;
+		height: 27rem;
+
+		& img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			display: block;
+			width: 160%;
+		}
+	}
+}
+.diferenciais-img{
+	display: block;
+	width: 5rem;
+
+	& img {
+		display: block;
+		width: 100%;
+	}
+}
+
+
+.dbocx {
+	display: block;
+	width: 100%;
+	vertical-align: middle;
+
+	& img {
+		display: inline-block;
+		width: 30rem;
+		vertical-align: middle;
+		padding: .5rem;
+
+		@include border-box;
+	}
+
+	& .dbocx-logo{
+		display: block;
+		width: 15rem;
+		vertical-align: middle;
+		padding: 0;
+	}
+}
+
+
+@media all and (max-width: 1023px){
+
+	.dbocx {
+
+		& img {
+			width: 100%;
+		}
+	}
+}
