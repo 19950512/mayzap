@@ -28,17 +28,16 @@ define ( 'AUTHOR', 'DevNux' );
 
 
 /* DB - arquivo Db.php 
-	define ( 'DB_HOST', '127.0.0.1' );
-	define ( 'DB_NAME', 'database_name' );
-	define ( 'DB_USER', 'nome_user' );
-	define ( 'DB_PASSWORD', 'senha_do_db' );
-	define ( 'DB_PORT', '5432' );
-	
-	// SECRET
-	define( 'API_KEY', 'SUA_API_KEY' );
+define ( 'DB_HOST', '127.0.0.1' );
+define ( 'DB_NAME', 'database_name' );
+define ( 'DB_USER', 'nome_user' );
+define ( 'DB_PASSWORD', 'senha_do_db' );
+define ( 'DB_PORT', '5432' );
+
+// SECRET
+define( 'API_KEY', 'SUA_API_KEY' );
 */
 require_once 'Db.php';
-
 
 
 /* Config.php - arquivo de configurações
