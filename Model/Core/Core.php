@@ -4,6 +4,13 @@ namespace Model\Core;
 
 class Core {
 
+	public static function substr($string, $start = 0, $finish = false){
+		$finish = $finish == false ? self::strlen($string) : $finish;
+		return substr($string, $start, $finish);
+	}
+	public static function strlen($string = ''){
+		return strlen($string);
+	}
 	public static function mustache($mustache = [], $mask = ''){
 		$view = str_replace(array_keys($mustache), array_values($mustache), $mask);
 		return $view;
@@ -30,6 +37,9 @@ class Core {
 	public static function base64_decode($string = ''){
 		return base64_decode($string);
 	}
+	public static function senhaEncript($senha = ''){
+		return base64_encode(sha1(substr(md5($senha), 6, 25)));
+	}
 	public static function date($mask = ''){
 		$mask = ($mask == '') ? 'd/m/Y' : $mask;
 		return date($mask);
@@ -43,6 +53,11 @@ class Core {
 	}
 	public static function ip(){
 		return $_SERVER['REMOTE_ADDR'] ?? '';
+	}
+
+
+	public static function trataURL($url = ''){
+		return self::strtolower(urlencode($url));
 	}
 
 

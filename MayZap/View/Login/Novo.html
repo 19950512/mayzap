@@ -1,6 +1,6 @@
 <section class="content content_v content_h content_m">
 	<div class="max40 margin-auto">
-		<h2 class="text-center">LOGIN</h2>
+		<h2 class="text-center">CRIAR</h2>
 		<div class="site-space-2"></div>
 		<p class="formulario-titulo">
 			<i class="icl ic-fingerprint"></i> E-mail
@@ -17,19 +17,19 @@
 		</div>
 		<div class="site-space-1"></div>
 		<div class="block width-100 pd-right-min">
-			<button class="width-100 b b-primary" id="login_submit" onclick="entrar(this)"><i class="icl ic-sign-in"></i> Entrar</button>
+			<button class="width-100 b b-primary" id="login_submit" onclick="criar(this)"><i class="icl ic-plus"></i> Criar</button>
 		</div>
 	</div>
 </section>
 
 <script>
 
-	window.entrar = async btn => {
-
+	window.criar = async btn => {
+		
 		btn.innerHTML = '<i class="icl ic-spinner-third rotating"></i> Aguarde...';
-		btn.disabled = true;
+		/*btn.disabled = true;*/
 
-		var autentica = dev.ajax('/login/entrar', {
+		var autentica = dev.ajax('/login/criar', {
 			acc_email: acc_email.value,
 			acc_senha: acc_senha.value
 		});
@@ -42,7 +42,7 @@
 				return false;
 			}
 
-			btn.innerHTML = '<i class="icl ic-sign-in"></i> Entrar';
+			btn.innerHTML = '<i class="icl ic-sign-in"></i> criar';
 			dev.mensagem(res.data);
 			btn.disabled = false;
 
@@ -51,7 +51,7 @@
 		});
 	};
 
-	window.login_evento = evt => (evt.keyCode == 13) ? entrar(login_submit) : false;
+	window.login_evento = evt => (evt.keyCode == 13) ? criar(login_submit) : false;
 
 	dev.add('keyup', acc_senha, evt => login_evento(evt));
 	dev.add('keyup', acc_email, evt => login_evento(evt));

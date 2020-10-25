@@ -9415,6 +9415,20 @@ footer .img-localizacao {
   background-position: center top;
   background-repeat: no-repeat; }
 
+.miniatura-produto {
+  background-color: white;
+  display: block;
+  width: 100%;
+  border: 0.1rem solid var(--colorPrimary);
+  padding: 1rem;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  margin-bottom: 1rem;
+  border-radius: .5rem; }
+
 .content-empresa {
   display: table;
   width: 100%; }

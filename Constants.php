@@ -13,6 +13,7 @@ define( 'EXTENSAO_VIEW', '.html' );
 
 /* CONFIGURAÇÕES DO SITE */
 define( 'SESSION_LOGIN', 'LOGIN' );
+define( 'SESSION_CARRINHO', 'CARRINHO' );
 define( 'SESSION_CONFIGURACOES', 'CONFIGURACOES' );
 define( 'SESSION_VISITANTE', 'VISITANTE' );
 define( 'SESSION_TOKEN', 'TOKEN' );

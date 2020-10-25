@@ -5,6 +5,7 @@ namespace Model\Login;
 use Model\Db\Connection;
 use Model\Model;
 use PDO;
+use PDOException;
 use Model\Core\De as de;
 use Model\Core\Core;
 
@@ -19,7 +20,6 @@ class Login extends Model{
 	static function somenteLogin(){
 
 		if(!self::_logado()){
-
 
 			if(isset($_POST['push']) and $_POST['push'] === 'push'){
 				header("HTTP/1.0 403 Not Found");
@@ -66,16 +66,19 @@ class Login extends Model{
 		return $temp;
 	}
 
-	function authentica($app_id, $app_senha){
-
+	function authentica($data = []){
+		
+		$acc_email = $data['acc_email'] ?? '';
+		$acc_senha = $data['acc_senha'] ?? '';
+		
 		// Caso e-mail e senha não sejam informados
-		if(empty($app_id) OR empty($app_senha)){
-			return ['r' => 'no', 'data' => 'Ops, você precisa informar o ID e a Senha corretamente.'];
+		if(empty($acc_email) OR empty($acc_senha)){
+			return ['r' => 'no', 'data' => 'Ops, você precisa informar o E-mail e a Senha corretamente.'];
 		}
 
 		// Striptags.
-		$app_id = Core::strip_tags($app_id);
-		$app_senha = Core::strip_tags($app_senha);
+		$acc_email = Core::strip_tags($acc_email);
+		$acc_senha = Core::strip_tags(Core::senhaEncript($acc_senha));
 
 	
 		// acc_status 1 = ativo, 2 inativo
@@ -83,10 +86,10 @@ class Login extends Model{
 			SELECT
 				*
 			FROM cad_conta AS acc
-			WHERE acc.app_id = :app_id AND acc.app_senha = :app_senha
+			WHERE acc.acc_email = :acc_email AND acc.acc_senha = :acc_senha
 		');
-		$sql->bindParam(':app_id', $app_id);
-		$sql->bindParam(':app_senha', $app_senha);
+		$sql->bindParam(':acc_email', $acc_email);
+		$sql->bindParam(':acc_senha', $acc_senha);
 		$sql->execute();
 		$temp = $sql->fetch(PDO::FETCH_ASSOC);
 
@@ -97,12 +100,12 @@ class Login extends Model{
 		}
 
 		// Conta inativa
-		if(isset($temp['acc_status']) and $temp['acc_status'] == 2){
+		if(isset($temp['acc_ativo']) and $temp['acc_ativo'] == false){
 			return ['r' => 'no', 'data' => 'Vish, sua conta está inativada, para ativa-la verifique a caixa de entrada do seu e-mail.'];
 		}
 
 		// Cria a sessão do login
-		self::_createSession($temp['app_id']);
+		self::_createSession($temp['acc_email']);
 
 		// Tudo certo
 		return ['r' => 'ok', 'data' => $temp];
@@ -132,7 +135,7 @@ class Login extends Model{
 		}
 
 		// Se o status da conta está ativo
-		if(isset($temp['acc_status']) and $temp['acc_status'] == 1){
+		if(isset($temp['acc_ativo']) and $temp['acc_ativo'] == true){
 			return ['r' => 'no', 'data' => 'Ops, Sua conta já está ativa, para acessar sua conta, <a href="/login?email='.$temp['acc_email'].'">clique aqui</a>.'];
 		}
 
@@ -171,13 +174,14 @@ class Login extends Model{
 
 		// Striptags.
 		$data['acc_email'] = Core::strip_tags($data['acc_email']);
-		$data['acc_senha'] = Core::strip_tags($data['acc_senha']);
+		$data['acc_senha'] = Core::strip_tags(Core::senhaEncript($data['acc_senha']));
 	
 		// Check se exist uma conta com esse email
 		$sql = $this->conexao->prepare('
 			SELECT acc_email FROM cad_conta WHERE acc_email = :acc_email
 		');
 		$sql->bindParam(':acc_email', $data['acc_senha']);
+
 		$temp = $sql->fetch(PDO::FETCH_ASSOC);
 
 		if($temp){     
@@ -187,32 +191,38 @@ class Login extends Model{
 		$sql = null;
 
 		$acc_ip = Core::ip();
+		$erro = 'Ops, não foi possível criar uma conta agora, tente novamente mais tarde.';
+		try {
+			$sql = $this->conexao->prepare('
+				INSERT INTO cad_conta (
+					acc_email,
+					acc_senha,
+					acc_ip
+				) VALUES (
+					:acc_email,
+					:acc_senha,
+					:acc_ip
+				)
+			');
+			$sql->bindParam(':acc_email', $data['acc_email']);
+			$sql->bindParam(':acc_senha', $data['acc_senha']);
+			$sql->bindParam(':acc_ip', $acc_ip);
+			$sql->execute();
+			$temp = $sql->fetch(PDO::FETCH_ASSOC);
 
-		$sql = $this->conexao->prepare('
-			INSERT INTO cad_conta (
-				acc_email,
-				acc_senha,
-				acc_ip
-			) VALUES (
-				:acc_email,
-				:acc_senha,
-				:acc_ip
-			)
-		');
-		$sql->bindParam(':acc_email', $data['acc_email']);
-		$sql->bindParam(':acc_senha', $data['acc_senha']);
-		$sql->bindParam(':acc_ip', $acc_ip);
-		$sql->execute();
-		$temp = $sql->fetch(PDO::FETCH_ASSOC);
-
+		}catch (PDOException $e){
+			if(($e->errorInfo[0] ?? '') == '23505'){
+				$erro = 'Ops, já existe uma conta com este e-mail, tente recuperar ou tente outro e-mail.';
+			}
+		}	
 		// Conta não cadastrada
 		if($temp === false){     
-			return ['r' => 'no', 'data' => 'Ops, não foi possível criar uma conta agora, tente novamente mais tarde.'];
+			return ['r' => 'no', 'data' => $erro];
 		}
 
 		// Cria a sessão do login
 		// NÃO PODE CRIAR A SESSÃO DO LOGIN, POIS PRECISA ATIVAR ELA, É O EMAIL QUE O USUARIO RECEBE PARA ATIVAR.
-		//self::_createSession($data['acc_email']);
+		self::_createSession($data['acc_email']);
 
 		return ['r' => 'ok', 'data' => 'Pronto, sua conta foi criada.'];
 	}

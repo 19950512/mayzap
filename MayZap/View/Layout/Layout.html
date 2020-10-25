@@ -106,13 +106,10 @@
 							<a href="/" title="Início" class="white-black"><i class="icl ic-home"></i> Início</a>
 						</div>
 						<div class="item row">
-							<a href="/servicos" title="Serviços" class="white-black"><i class="icl ic-tools"></i> Serviços</a>
+							<a href="/buscar" title="Buscar" class="white-black"><i class="icl ic-search"></i> Buscar</a>
 						</div>
 						<div class="item row">
-							<a href="/sobre" title="{{site_nome}}" class="white-black"><i class="icl ic-tooth"></i> {{site_nome}}</a>
-						</div>
-						<div class="item row">
-							<a href="/{{ifloged}}" class="white-black" title="{{pes_nome}}"><i class="icl ic-user-circle"></i> {{pes_nome}}</a>
+							<a href="/{{ifloged}}" data-href="false" class="white-black" title="{{pes_nome}}"><i class="icl ic-user-circle"></i> {{pes_nome}}</a>
 						</div>
 						<div class="item row">
 							<button type="button" onclick="darkModeToggle();" class="b b-transparent font17"><i class="ics ic-adjust white-black"></i></button>
@@ -130,9 +127,7 @@
 			<button type="button" onclick="menuMobileClose();" class="b b-transparent font25 b-times"><i class="icr ic-times white-black"></i></button>
 			
 			<a href="/" title="Início"><div class="nav-mob-item text-center white-black"><i class="icl ic-home"></i> INÍCIO</div></a>
-			<a href="/" title="Serviços"><div class="nav-mob-item text-center white-black"><i class="icl ic-tools"></i> SERVIÇOS</div></a>
-			<a href="/sobre" title="{{site_nome}}"><div class="nav-mob-item text-center white-black upper"><i class="icl ic-tooth"></i> {{site_nome}}</div></a>
-			<a href="/{{ifloged}}" title="Serviços"><div class="nav-mob-item text-center white-black upper"><i class="icl ic-user-circle"></i> {{pes_nome}}</div></a>
+			<a href="/{{ifloged}}" data-href="false" title="Serviços"><div class="nav-mob-item text-center white-black upper"><i class="icl ic-user-circle"></i> {{pes_nome}}</div></a>
 		</div>
 		<main id="content">{{view}}</main>
 		<footer>
@@ -141,6 +136,14 @@
 		<div id="push-loader"></div>
 		<div id="feed_back" class="feed_back"></div>
 		<script>
+
+			dev.add('DOMContentLoaded', document, f => {
+
+				if(typeof(Carrinho) !== 'undefined'){
+					var carrinho = new Carrinho();
+				}
+			});
+
 
 			window.logout = f => {
 
@@ -164,7 +167,13 @@
 				themes.set(themes.active);
 			};
 
-			(f => themes.set(themes.check()))();
+			(f => {
+				themes.set(themes.check());
+
+				if(typeof(Carrinho) !== 'undefined'){
+					var carrinho = new Carrinho();
+				}
+			})();
 
 		</script>
 	</body>

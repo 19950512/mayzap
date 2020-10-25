@@ -1,0 +1,10 @@
+.miniatura-produto{
+    background-color: white;
+    display: block;
+    width: 100%;
+    border: .1rem solid var(--colorPrimary);
+    padding: 1rem;
+    @include border-box;
+    margin-bottom: 1rem;
+    border-radius: .5rem;
+}

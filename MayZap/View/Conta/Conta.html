@@ -3,125 +3,9 @@
 	<div class="inline-block width-25">
 		<button class="b b-transparent" type="button" onclick="logout();" title="Sair"><i class="icl ic-sign-out"></i> Sair</button>
 	</div>
-
-	<a href="/conta/extrato" title="Extrato da Conta"><h1><strong>Meu saldo devedor: </strong>R$ {{saldo}}</h1></a>
-	<h2>Ordens de Serviços</h2>
-
-	<div>
-		<input oninput="os_render(os_fetch);" id="os_input_search" class="formsimple-input width-100" type="text" placeholder="Pesquisar OS, nome de paciente, data, valor, etc.." />
-	</div>
-
-	<div style="max-height: 70vh; width: 100%;max-width: 100%; overflow: auto;">
-		<table class="simple-grid">
-			<thead>
-				<tr>
-					<th style="width: 45px;">QT</th>
-					<th>CÓDIGO</th>
-					<th>CADASTRO</th>
-					<th>ENTREGA</th>
-					<th>COR</th>
-					<th>PACIENTE</th>
-					<th>STATUS</th>
-					<th class="text-right">DESCONTO</th>
-					<th class="text-right">VALOR</th>
-					<th class="text-right">TOTAL</th>
-					<th style="width: 20px;"></th>
-				</tr>
-			</thead>
-			<tbody id="render_os"></tbody>
-		</table>
-	</div>
 </section>
 
-<script>
-
-	window.os_fetch = {};
-
-	window.os_get = async f => {
-
-		render_os.innerHTML = '<tr><th class="text-center" colspan="11"><i class="icl ic-spinner-third rotating"></i> Aguarde...</th></tr>';
-
-		var os = dev.ajax('/conta/getallos', {});
-
-		os.then(res => {
-
-			/* resposta.innerHTML = res.data; */
-			if(res.r == 'ok'){
-				render_os.innerHTML = '';
-				os_fetch = res.data;
-				os_render(os_fetch);
-				return false;
-			}else{
-				if(typeof(logout) !== 'undefined'){
-					logout();
-				}
-			}
-
-
-			dev.mensagem(res.data);
-
-		}).catch(res => {
-			console.error("Ops, algo de errado não deu certo.", res);
-		});
-	};
-
-	window.os_render = data => {
-
-		let mascara = `<tr onclick="os_openDetalhes({{os_codigo}});">
-			<td>{{ct}}</td>
-			<td>{{os_codigo}}</td>
-			<td>{{os_autodata_str}}</td>
-			<td>{{os_data_entrega_str}}</td>
-			<td>{{os_cor}}</td>
-			<td>{{os_paciente}}</td>
-			<td>{{os_status_str}}</td>
-			<td class="text-right">{{os_desconto_str}}</td>
-			<td class="text-right">{{os_valor_str}}</td>
-			<td class="text-right">{{os_valor_total_str}}</td>
-			<td></td>
-		</tr>`;
-
-		dev.render(data, {
-			renderTo: 'render_os',
-			mask: mascara,
-			empty: '<tr><th colspan="11"><p class="text-center">nada foi encontrado <br /><br /> <i class="icl ic-frown gray3" style="font-size: 30px;"></i><p></th></tr>',
-			search: os_input_search.value,
-			filters: {}
-		});
-	};
-
-	window.os_openDetalhes = os_codigo => {
-
-		let fetchTemp = {};
-		for(var i in os_fetch){
-			if(os_fetch[i]['os_codigo'] == os_codigo){
-				fetchTemp = os_fetch[i];
-			}
-		}
-
-		let html = `
-			<div class="bg-white">
-				<div class="content content_h content_v content_m">
-					<h1>Ordem de Serviço</h1>
-					<h4>Código: ${fetchTemp['os_codigo']}</h4>
-					<h4>Paciente: ${fetchTemp['os_paciente']}</h4>
-				</div>
-			</div>
-		`;
-
-		dev.openDialog({
-			close: true,
-			html: html,
-			invisible: true
-		});
-		console.log(fetchTemp);
-	};
-
-	(f => os_get())();
-</script>
-
-<!--
-  <section class="hidden content content_v content_h content_m">
+  <section class="content content_v content_h content_m">
 	<div class="max40 margin-auto">
 		  <h1 class="text-center">Postar Fotos</h1>
 
@@ -278,4 +162,3 @@
 	  xhr.send(formData);
 	};
   </script>
--->
