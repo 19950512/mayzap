@@ -59,4 +59,20 @@ class Buscar extends Controller {
 		// Render View
 		$this->render($mustache, $this->controller, $this->viewName);
     }
+
+
+	function scroll(){
+
+		foreach($_POST as $indice => $valor){
+			$_GET[$indice] = $valor;
+		}
+
+        $produtos = $this->Produtos->render();
+
+		echo json_encode([
+			'r' => 'ok',
+			'data' => $produtos,
+		]);
+		exit;
+	}
 }

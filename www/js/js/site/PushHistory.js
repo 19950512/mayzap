@@ -317,6 +317,8 @@ const xhrfn = (controler, doneCallFn) => {
     let data = XHRPopState
         .then( json => {
 
+            scrollInfinity.reset();
+
             document.body.style.cursor = 'default';
             let metas = '';
             let html = '';

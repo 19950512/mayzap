@@ -34,7 +34,27 @@ class Consultas extends Render {
             if(count($fetch) < 10){
                 $this->quantidade = '0'.count($fetch);
             }
-        } 
+        }
+
+        /* INÍCIO DA PAGINAÇÃO */
+        $this->paginaatual = $_GET['pag'] ?? $this->paginaatual;
+
+		$this->paginatotal = floor(count($fetch) / $this->porpagina);
+		if(count($fetch) % $this->porpagina !== 0){
+			$this->paginatotal += 1;
+		}
+
+		$offsetimoveis = ($this->porpagina * $this->paginaatual) - $this->porpagina + 1;
+
+		if($offsetimoveis > 0){
+			$offsetimoveis -= 1;
+		}
+		if($offsetimoveis < 0){
+			$offsetimoveis = 0;
+		}
+
+        $fetch = array_slice($fetch, $offsetimoveis, $this->porpagina);
+        /* FIM DA PAGINAÇÃO */
 
         return $fetch;
     }

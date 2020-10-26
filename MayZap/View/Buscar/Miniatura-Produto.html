@@ -1,11 +1,13 @@
 <div class="block width-33-3 pd-center-1">
     <div class="miniatura-produto">
         <a href="/buscar/ver/{{pro_codigo}}/{{pro_descricao_url}}">
-            <div class="inline-block width-60"><strong>{{pro_nome}}</strong></div>
+            <div class="inline-block width-60"><strong>{{pro_nome}}</strong>- ID {{pro_codigo}}</div>
             <div class="inline-block width-40 text-right">{{pro_valor}}</div>
-            <div><p>{{pro_descricao_miniatura}}</p></div>
+            <div><p class="black">{{pro_descricao_miniatura}}</p></div>
         </a>
-        <div class="inline-block width-50 pd-right-min"><button onclick="carrinho.add(this, {{pro_codigo}});" class="b b-flat width-100">Adicionar</button></div>
+        <div class="inline-block width-50 pd-right-min">
+            {{btn_carrinho}}
+        </div>
         <div class="inline-block width-50 pd-left-min"><button class="b b-flat width-100">Comprar</button></div>
     </div>
 </div>

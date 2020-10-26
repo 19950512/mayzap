@@ -5,12 +5,16 @@ namespace Model\Produtos;
 use Model\Core\Core;
 use Model\Core\De AS de;
 use Model\Produtos\Render;
+use Model\Carrinho\Carrinho;
 
 use Model\Model;
 
 class Render extends Model {
 
     protected function _render($pro_codigo = false){
+
+        $carrinho = new Carrinho();
+        $carrinho = $carrinho->getCarrinho();
 
         // dataset produtos
         $produtos = $this->_getProdutos($pro_codigo);
@@ -31,10 +35,16 @@ class Render extends Model {
             if(Core::strlen($pro_descricao_miniatura) == $this->maximo_caracteres_miniatura){
                 $pro_descricao_miniatura = $pro_descricao_miniatura.'...';
             }
+            
+            $btn_carrinho = '<button onclick="carrinho.add(this, {{pro_codigo}});" class="b b-flat width-100">Adicionar</button>';
+            if(isset($carrinho[$arr['pro_codigo']])){
+                $btn_carrinho = '<button onclick="carrinho.remove(this, {{pro_codigo}});" class="b b-flat width-100">Remover</button>';
+            }
 
             $mustache = [
                 '{{pro_nome}}' => $arr['pro_nome'],
                 '{{pro_valor}}' => $pro_valor,
+                '{{btn_carrinho}}' => $btn_carrinho,
                 '{{pro_descricao}}' => $arr['pro_descricao'],
                 '{{pro_descricao_miniatura}}' => $pro_descricao_miniatura,
                 '{{pro_descricao_url}}' => Core::trataURL(Core::substr($arr['pro_descricao'], 0, 20)),

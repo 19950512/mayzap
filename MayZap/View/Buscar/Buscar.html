@@ -3,5 +3,28 @@
 
     <div class="site-space-2"></div>
 
-    <div class="box-laterais-1">{{miniatura_produtos}}</div>
+    <div class="box-laterais-1" id="render_produtos">{{miniatura_produtos}}</div>
+    <div id="id_feedback_request" onclick="scrollInfinity.request();"><p class="text-center down arrow "><i class="icl ic-chevron-double-down font30"></i></p></div>
+
 </section>
+<script>
+
+    var flagScroll = false;
+    (f => {
+        if(!flagScroll){
+            flagScroll = !flagScroll;
+            if(typeof(scrollInfinity) !== 'undefined'){
+                scrollInfinity.init(id_feedback_request, render_produtos, id_feedback_request);
+            }
+        }
+    })();
+    
+    dev.add('DOMContentLoaded', window, f => {
+        if(flagScroll){
+            flagScroll = !flagScroll;
+            if(typeof(scrollInfinity) !== 'undefined'){
+                scrollInfinity.init(id_feedback_request, render_produtos, id_feedback_request);
+            }
+        }
+    });
+</script>

@@ -12,6 +12,12 @@ class Produtos extends Consultas{
 
     public $quantidade = 0;
 
+	public $porpagina = 3;
+
+	public $paginaatual = 1;
+
+	public $paginatotal = 1;
+
     public $maximo_caracteres_miniatura = 105;
 
 	public function __construct(){

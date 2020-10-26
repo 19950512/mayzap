@@ -7,6 +7,8 @@ use Model\Core\De as de;
 use Model\Core\Core;
 use Model\Router\Router;
 
+//use Imagick;
+
 class Controller {
 
 	/* Object VIEW / Layout */
@@ -27,7 +29,21 @@ class Controller {
 
 		$this->view = new View();
 		$this->Router = new Router();
+
+
+		/* $src = '/home/dev/Downloads/dontgiveup.jpg';
+		$dest = '/home/projetos/mayzap/www/img/produtos/jp2.webp';
+		$width = 500;
+		$height = 500;
+		$im = new Imagick();
+		$im->pingImage($src);
+		$im->readImage($src);
+		$im->resizeImage($width,$height,Imagick::FILTER_CATROM , 1,TRUE ); 
+		$im->setImageFormat( "webp" );
+		$im->setOption('webp:method', '6'); 
+		$im->writeImage($dest);  */
 	}
+	
 
 	public function render($mustache = [], $controller = '', $viewName = '', $metas = [], $layout = 'Layout'){
 

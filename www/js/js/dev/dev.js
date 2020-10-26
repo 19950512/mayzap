@@ -18,7 +18,7 @@ class Dev {
 
         let timeout;
         return function(...args){
-
+            
             const context = this;
 
             const later = () => {
