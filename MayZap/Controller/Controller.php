@@ -31,17 +31,19 @@ class Controller {
 		$this->Router = new Router();
 
 
-		/* $src = '/home/dev/Downloads/dontgiveup.jpg';
-		$dest = '/home/projetos/mayzap/www/img/produtos/jp2.webp';
-		$width = 500;
-		$height = 500;
-		$im = new Imagick();
-		$im->pingImage($src);
-		$im->readImage($src);
-		$im->resizeImage($width,$height,Imagick::FILTER_CATROM , 1,TRUE ); 
-		$im->setImageFormat( "webp" );
-		$im->setOption('webp:method', '6'); 
-		$im->writeImage($dest);  */
+		/* for ($img= 1; $img <= 20; $img++) { 
+			$src = '/home/projetos/mayzap/www/img/'.$img.'.jpeg';
+			$dest = '/home/projetos/mayzap/www/img/'.$img.'-webp.webp';
+			$width = 720;
+			$height = 1280;
+			$im = new Imagick();
+			$im->pingImage($src);
+			$im->readImage($src);
+			$im->resizeImage($width,$height,Imagick::FILTER_CATROM , 1,TRUE ); 
+			$im->setImageFormat( "webp" );
+			$im->setOption('webp:method', '6'); 
+			$im->writeImage($dest); 
+		} */
 	}
 	
 
